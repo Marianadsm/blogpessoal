@@ -1,6 +1,9 @@
 package com.generation.meublogpessoal.meublogpessoal.controller;
 
 import java.util.List;
+import java.util.Optional;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +16,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.generation.meublogpessoal.meublogpessoal.model.Postagem;
 import com.generation.meublogpessoal.meublogpessoal.repository.PostagemRepository;
@@ -43,22 +48,32 @@ public class PostagemController {
 		//  /\ procurar a postagem pelo ID
 	}
 	@GetMapping ("/titulo/{titulo}")//depois da /, o ultimo dado é um atributo.por isso precisa de 2 /.
-	public ResponseEntity<List<Postagem>> GetByTitulo(@PathVariable String titulo){
-		return ResponseEntity.ok(repository.findAllByTituloContainingIgnoreCase(titulo));
+	public ResponseEntity<List<Postagem>> GetByTitulo(@PathVariable String titulo){//List: para aparecer a lista de postagens(msmo q seja 1 só)
+		return ResponseEntity.ok(repository.findAllByTituloContainingIgnoreCase(titulo));//chamando o "repository" pq foi como eu nomeei ele na linha 31
 	}
 	// /\ procurar uma postagem pelo titulo/palavras q contem no titulo
 	
 	@PostMapping //post e put:usa sempre o RequestBody. Procuro no Insomnia no modo Json
 	public ResponseEntity<Postagem> post (@RequestBody Postagem postagem){ //requestbody: vai chamar o "corpo" da minha classe Postagem q ja existe
-		return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(postagem));
-	}
-	@PutMapping //post e put:usa sempre o RequestBody. Procuro no Insomnia no modo Json
-	public ResponseEntity<Postagem> put (@RequestBody Postagem postagem){ //requestbody: vai chamar o "corpo" da minha classe Postagem q ja existe
-		return ResponseEntity.status(HttpStatus.OK).body(repository.save(postagem));
-	}
+		return ResponseEntity.status(HttpStatus.CREATED)
+				.body(repository.save(postagem));//.save é do repository, ele faz nosql um "insert into tb_postagens (titulo,texto) VALUES ("titulo","texto")
+	}//tudo eu pego da minha model, como está tudo
+	
+	@PutMapping//post e put:usa sempre o RequestBody. Procuro no Insomnia no modo Json
+    public ResponseEntity<Postagem> atualizarPostagem(@Valid @RequestBody Postagem postagem){//requestbody: vai chamar o "corpo" da minha classe Postagem q ja existe. Postagem postagem (Objeto + objeto q eu instanciei- sem precisar de Postagem = new postagem)
+        return repository.findById(postagem.getId())
+                .map(resposta -> ResponseEntity.status(HttpStatus.OK)//aqui nao tem List porque ele insere UMA COISA de cada vez, o mesmo do post. 
+                .body(repository.save(postagem)))
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+	
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping("/{id}") //posts/o numero do ID e delete
 	public void delete (@PathVariable Long id) {
-		repository.deleteById(id);
+		Optional <Postagem> postagem = repository.findById(id); // opção: se existir, apaga a postagem. se não existir, não faz nada
+		if (postagem.isEmpty())
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+			repository.deleteById(id);
 		
 	}
 }

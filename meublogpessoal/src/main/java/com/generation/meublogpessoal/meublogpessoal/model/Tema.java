@@ -24,9 +24,9 @@ public class Tema {
 	@NotNull
 	private String descricao;
 
-	@OneToMany(mappedBy = "tema", cascade = CascadeType.ALL)
-	@JsonIgnoreProperties("tema")
-	private List<Postagem> postagem;
+	@OneToMany(mappedBy = "tema", cascade = CascadeType.ALL)//One to many: um tema, várias postagens. /cascade: cascata, ou seja, se eu excluo uma, todas excluem, se eu atualizo, todas atualizam
+	@JsonIgnoreProperties("tema")//Um está atrelado a outro (postagem tem tema, tema tem postagem) - gera Recursividade(loop infinito). o JsonIgnoreProperties: qdo ele não deixa ocorrer a recursividade(que é exibir a mesma coisa mais de uma vez, n deixa ter esse looping)
+	private List<Postagem> postagem;//List:  define que vai ter uma lista(atrela uma lista de postagens desse tema)
 
 	public Long getId() {
 		return id;

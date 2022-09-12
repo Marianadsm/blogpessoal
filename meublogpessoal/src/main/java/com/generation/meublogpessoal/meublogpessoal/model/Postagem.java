@@ -16,7 +16,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 //os @ funcionam pro dado logo abaixo deles. eles são exclusividade do spring
 
-@Entity // TODO model deve ter uma @entity. ele indica que essa classe será uma tabela
+@Entity // TODO model deve ter uma @entity. ele indica que essa classe será uma tabela. ENTIDADE significa tabela
 		// no banco de dados.
 @Table(name = "postagens") // @table cria pra mim um nome pra minha tabela. semele, fica com o nome do
 							// objeto automaticamente
@@ -47,7 +47,19 @@ public class Postagem {
 	
 	@ManyToOne
 	@JsonIgnoreProperties("postagem")
-	private Tema tema;
+	private Tema tema;//aqui n precisa de Lista igual na classe tema, porque n vai aparecer uma lista de tema pra cada postagem e sim o contrario :)
+
+	@ManyToOne
+	@JsonIgnoreProperties("postagem")
+	private Usuario usuario;
+	
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
 
 	public Long getId() {
 		return id;
