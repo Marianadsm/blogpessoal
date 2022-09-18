@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.generation.meublogpessoal.meublogpessoal.model.Postagem;
 import com.generation.meublogpessoal.meublogpessoal.model.Tema;
 import com.generation.meublogpessoal.meublogpessoal.repository.TemaRepository;
 

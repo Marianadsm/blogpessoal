@@ -1,6 +1,6 @@
 package com.generation.meublogpessoal.meublogpessoal.service;
 
-// ********Service: VERIFICAÇÕES p/ cadastrar um usuario antes de ir pro controller/banco de dados.
+// ********Service: VERIFICAÇÕES/validações p/ cadastrar um usuario antes de ir pro controller/banco de dados.
 import java.nio.charset.Charset;
 import java.util.Optional;
 
@@ -54,7 +54,7 @@ public class UsuarioService {
 			if ((buscaUsuario.isPresent()) && (buscaUsuario.get().getId() != usuario.getId()))//se um dos dois for false, ele vai dar um BadRequest
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário já existe!", null);
 
-			usuario.setSenha(criptografarSenha(usuario.getSenha()));// aqui precisa criptografar a senha tb, pois sempre
+			/*if else*/ usuario.setSenha(criptografarSenha(usuario.getSenha()));// aqui precisa criptografar a senha tb, pois sempre
 																	// q a pessoa muda a senha, a criptografia tb muda
 
 			return Optional.ofNullable(usuarioRepository.save(usuario)); // ofnullable: valida se oscampos que to
@@ -63,7 +63,7 @@ public class UsuarioService {
 
 		}
 
-		return Optional.empty();// se não existe o usuario (linha 40), ele cai aqui. fica vazio
+		/*else*/ return Optional.empty();// se não existe o usuario (linha 40), ele cai aqui. fica vazio
 
 	}
 
@@ -84,12 +84,12 @@ public class UsuarioService {
 						.setToken(gerarBasicToken(usuarioLogin.get().getUsuario(), usuarioLogin.get().getSenha()));
 				usuarioLogin.get().setSenha(usuario.get().getSenha());
 
-				return usuarioLogin;
+				/*else*/ return usuarioLogin;
 
 			}
 		}
 
-		return Optional.empty();
+	/*else*/	return Optional.empty();
 
 	}
 
@@ -100,7 +100,7 @@ public class UsuarioService {
 																		// do teclado
 
 		return encoder.encode(senha);// usando o método do bcrypt que criptografa a senha digitada e retorna a senha
-										// já criptografada
+										// já criptografada(encode é o metodo que criptografa a senha)
 
 	}
 
@@ -108,14 +108,14 @@ public class UsuarioService {
 
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-		return encoder.matches(senhaDigitada, senhaBanco);
+		return encoder.matches(senhaDigitada, senhaBanco);//matches descriptografa a senha
 
 	}
 
-	private String gerarBasicToken(String usuario, String senha) {
+	private String gerarBasicToken(String usuario, String senha) { //usuario +senha = token. aqui ele criptografa a senha
 
 		String token = usuario + ":" + senha;
-		byte[] tokenBase64 = Base64.encodeBase64(token.getBytes(Charset.forName("US-ASCII")));
+		byte[] tokenBase64 = Base64.encodeBase64(token.getBytes(Charset.forName("US-ASCII")));//us ascii é um padrao de criptografia
 		return "Basic " + new String(tokenBase64);
 
 	}

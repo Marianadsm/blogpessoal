@@ -13,10 +13,10 @@ package com.generation.meublogpessoal.meublogpessoal.security;
 	import org.springframework.security.web.SecurityFilterChain;
 
 	@Configuration
-	@EnableWebSecurity
+	@EnableWebSecurity  //faz a instanciação de forma global, ao inves de apenas local
 	public class BasicSecurityConfig {
 
-	    @Bean //faz a instanciação de forma global, ao inves de apenas local
+	    @Bean //Bean faz a instancia sem precisar instanciar como "new"
 	    public PasswordEncoder passwordEncoder() {
 	        return new BCryptPasswordEncoder();
 	    }
@@ -37,10 +37,10 @@ package com.generation.meublogpessoal.meublogpessoal.security;
 
 	        http
 	            .authorizeHttpRequests((auth) -> auth
-	                .antMatchers("/usuarios/logar").permitAll() // é aberto ao publico sem estar logado (apenas o "Logar"
-	                .antMatchers("/usuarios/cadastrar").permitAll() // é aberto ao publico sem estar cadastrado(apenas o "Cadastrar"
+	                .antMatchers("/usuarios/logar").permitAll() // é aberto ao publico sem estar logado (apenas o "Logar" / sem token
+	                .antMatchers("/usuarios/cadastrar").permitAll() // é aberto ao publico sem estar cadastrado(apenas o "Cadastrar" / sem token
 	                .antMatchers(HttpMethod.OPTIONS).permitAll() // apos cadastrar e logar, ela pode fazer o que eu permitir aqui(acesso a tudo). eu substituo o OPTIONS para filtrar o que quero deixar disponivel. para deixar todos (post, put, delete, etc), deixa o OPTIONS
-	                .anyRequest().authenticated())
+	                .anyRequest().authenticated())//os outros precisam de token(autenticação)
 	            .httpBasic();
 
 	        return http.build(); //pega as regras que dei (abrir, logar e cadastrar, get put post e delete desde que esteja cadastrado e logado)

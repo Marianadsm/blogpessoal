@@ -2,6 +2,8 @@ package com.generation.meublogpessoal.meublogpessoal.security;
 
 //IMPL/IMPLEMENT: diz o que eu quero que implemente, além do PADRAO (e mexer neste padrao tb)
 //sobrescreve o userdetails, porem com o que eu quero com a minha aplicaçao
+//A Classe UserDetailsImpl implementa a Interface UserDetails, que tem como principal funcionalidade fornecer as informações básicas do usuário para o Spring Security
+//(Usuário, Senha, Direitos de acesso e as Restrições da conta).
 
 import java.util.Collection;
 import java.util.List;
